@@ -16,8 +16,8 @@ import math
 numpy_error = []
 try:
     import numpy as np
+    from scipy.stats import pearsonr
     from scipy.optimize import curve_fit
-    from scipy.stats.stats import pearsonr
     from scipy.special import factorial
 
     def log_model(n, a):

@@ -23,6 +23,7 @@ from algs.modeling import best_models, pearson_correlation
 # When a table wants to skip a value, select this one.
 SKIP = '*'
 
+
 class DataTable:
     """
     A class used to represent a table with columns.
@@ -35,20 +36,22 @@ class DataTable:
 
         >>> from algs.table import DataTable
         >>> tbl = DataTable([8, 8], ['N', 'SquareRoot'], decimals=4)
-        >>> for n in range(2,10):
-        >>>    tbl.row([n, n ** 0.5])
-        >>>
-               N    SquareRoot
-               2      1.4142
-               3      1.7321
-               4      2.0000
-               5      2.2361
-               6      2.4495
-               7      2.6458
-               8      2.8284
-               9      3.0000
+        >>> tbl.row([8, 2.8284])
+        >>> for n in range(2, 10):
+        ...     tbl.row([n, n ** 0.5])
+        ...
+           N    SquareRoot
+           2      1.4142
+           3      1.7321
+           4      2.0000
+           5      2.2361
+           6      2.4495
+           7      2.6458
+           8      2.8284
+           9      3.0000
 
     """
+
     def __init__(self, widths, labels, output=True, decimals=3):
         assert len(widths) == len(labels)
         self.output = output
@@ -60,7 +63,7 @@ class DataTable:
         self.num_rows = 0
         self.row_index = {}
         symbol = ',d'
-        for idx,width in enumerate(widths):
+        for idx, width in enumerate(widths):
             self.fmt += '{{0[{}]:>{}}}\t'.format(idx, width)
             self.entry_fmt += '{{0[{}]:>{}{}}}\t'.format(idx, width, symbol)
             symbol = '.{}f'.format(decimals)
@@ -98,7 +101,7 @@ class DataTable:
 
             if SKIP in row:
                 new_formats = []
-                for fmt,val,width in zip(formats, row, self.widths):
+                for fmt, val, width in zip(formats, row, self.widths):
                     if val == SKIP:
                         new_formats.append('{}:>{}s}}'.format(fmt.split(':')[0], width))
                     else:
@@ -117,7 +120,7 @@ class DataTable:
             self.num_rows += 1
 
         # replace all values
-        for idx in range(1,len(row)):
+        for idx in range(1, len(row)):
             self.values[row[0]][self.labels[idx]] = row[idx]
 
     def header(self, column):
@@ -141,7 +144,7 @@ class DataTable:
 
             if column in vals:
                 cols.append(vals[column])
-            elif column == self.labels[0]:   # might be row label
+            elif column == self.labels[0]:  # might be row label
                 cols.append(label)
 
         # SKIP ALL remaining values...
@@ -151,7 +154,7 @@ class DataTable:
 
         return cols
 
-    def best_model(self, column, preselected = None):
+    def best_model(self, column, preselected=None):
         """
         Assumes 0th column contains the 'N' value to use; try to find best curve_fit
         whose pearsonr is highest.
@@ -196,6 +199,7 @@ class DataTable:
 
         return pearson_correlation(y_act, y_fit)
 
+
 def process(table, chapter, number, description, create_image=True, xaxis='Problem instance size',
             yaxis='Time (in seconds)'):
     """Process Table by printing label/Description and visualizing table."""
@@ -205,6 +209,7 @@ def process(table, chapter, number, description, create_image=True, xaxis='Probl
         visualize(table, description, label, xaxis=xaxis, yaxis=yaxis)
     print()
 
+
 def caption(chapter, number):
     """
     Return string for 'element chapter-number. description'.
@@ -212,12 +217,15 @@ def caption(chapter, number):
     """
     return '{} {}-{}'.format(number.args[0].element(), chapter, number.args[0])
 
+
 def comma(n):
     """Return string for integer n with commas at thousands, i.e., '2,345,217'."""
     return '{:,}'.format(n)
 
+
 class FigureNum:
     """Represents a figure number in a chapter."""
+
     def __init__(self, num):
         self.number = num
 
@@ -226,7 +234,7 @@ class FigureNum:
 
     @contextmanager
     def __enter__(self):
-        return self.number
+        yield self.number
 
     def __exit__(self, arg1, arg2, arg3):
         self.number = -1
@@ -234,8 +242,10 @@ class FigureNum:
     def __str__(self):
         return '{}'.format(self.number)
 
+
 class TableNum:
     """Represents a table number in a chapter."""
+
     def __init__(self, num):
         self.number = num
 
@@ -244,13 +254,14 @@ class TableNum:
 
     @contextmanager
     def __enter__(self):
-        return '{}'.format(self.number)
+        yield '{}'.format(self.number)
 
     def __exit__(self, arg1, arg2, arg):
         self.number = -1
 
     def __str__(self):
         return '{}'.format(self.number)
+
 
 class ExerciseNum:
     """Represents an exercise number in a chapter."""
@@ -262,7 +273,7 @@ class ExerciseNum:
 
     @contextmanager
     def __enter__(self):
-        return '{}'.format(self.number)
+        yield '{}'.format(self.number)
 
     def __exit__(self, arg1, arg2, arg):
         self.number = -1
